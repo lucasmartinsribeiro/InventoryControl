@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">  
+
+<h:head></h:head> 
+<body> 
+
+	<h:form id="growl">
+       	<p:growl showDetail="true" sticky="true" />  
+    </h:form>
+	<h1 style="text-align: Center">Controle de Estoque</h1>
+	<h:form>
+		<p:menubar>
+			<p:menuitem value="Área Interna" action="Interno.xhtml?faces-redirect=true"/>								
+		</p:menubar>
+	</h:form>
+	<div>
+		<h2 style="text-align: Center;">Painel de Vendas</h2>
+		<p:separator></p:separator>
+		<h:form id="formPesquisa">
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Pesquisar por Código: " for="codigoPesq" />
+					<p:inputText value="#{vendaBean.codProduto}" id="codigoPesq"/>
+					<p:commandButton value="Pesquisar" action="#{vendaBean.PesquisaProduto()}"
+										process="@form" update="@form, formBusca"/>
+				</h:panelGrid>
+		</h:form>
+		<h:form id="formBusca">
+			<p:dataTable value="#{vendaBean.produtos}" var="produtoAtual">
+				<p:column headerText="Código">
+						<h:outputText value="#{produtoAtual.codigo}" />
+				</p:column>
+				<p:column headerText="Nome">
+						<h:outputText value="#{produtoAtual.nome}" />
+				</p:column>
+				<p:column headerText="Preço">
+						<h:outputText value="#{produtoAtual.preco}" />
+				</p:column>
+				<p:column headerText="Estoque">
+						<h:outputText value="#{produtoAtual.quantidade}" />
+				</p:column>
+				<p:column>
+					<p:commandButton value="Selecionar" action="#{vendaBean.selecionaProduto(produtoAtual)}"
+									process="@form" update="@form, :formCompra"/>
+				</p:column>
+			</p:dataTable>
+		</h:form>		
+		<p:separator></p:separator>
+		<h:form id="formCompra">
+			<h:panelGrid columns="5">
+				<p:outputLabel for="inputCondSelect" value="Código do Produto: " />
+				<p:inputText value="#{vendaBean.produtoSelecionado.codigo}" id="inputCondSelect"/>				
+				<p:outputLabel for="inputQuantDesej" value="Quantidade que deseja: " />
+				<p:inputText value="#{vendaBean.produtoSelecionado.quantidade}" id="inputQuantDesej"/>
+				<p:commandButton value="Confirmar" action="#{vendaBean.GuardaProduto()}"
+									process="@form" update="@form, :formItensDesejados :ValPacialCompra"/>
+			</h:panelGrid>		
+		</h:form>
+		<p:separator></p:separator>
+		<h:form id="formItensDesejados">
+			<h3 style="text-align: Center;">Itens Desejados</h3>
+			<p:dataTable value="#{vendaBean.itemsVenda}" var="produtoAtual">
+				<p:column headerText="Código">
+						<h:outputText value="#{produtoAtual.produto.codigo}" />
+				</p:column>				
+				<p:column headerText="Quantidade">
+						<h:outputText value="#{produtoAtual.quantidade}" />
+				</p:column>
+				<p:column headerText="Preço Unitário">
+						<h:outputText value="#{produtoAtual.produto.preco}" />
+				</p:column>				
+			</p:dataTable>		
+		</h:form>
+		
+		<p:separator></p:separator>
+		<h:form>
+			<p:commandButton value="Cancelar" action="#{vendaBean.cancelar()}" 
+								process="@form" update="@form, :formItensDesejados :formCompra :formBusca :formPesquisa :ValPacialCompra"/>	
+		
+			<p:commandButton value="Confirmar Compra" type="button"  onclick="PF('dlg2').show()"/>
+		</h:form>
+	</div>
+	
+	
+	
+	
+	<div style="text-align: Center; margin-top:10px; border: 5px solid #4f8207; background-color: #4f8207; color: white;
+		position: relative;
+		width:99%;
+		height:80px;
+		">
+		<h:form id="ValPacialCompra" style="display: inline-block;
+			left:50%;
+			top:50%;
+			margin-left:-100px;
+			margin-top:-40px; 
+			position:absolute;
+			width: 250px; 
+			height: 70px; 
+		">
+			<p:outputLabel for="valParcVenda" value="Valor Total Parcial: "/>			
+			<p:inputText id="valParcVenda" value="R$: #{vendaBean.valorParcialCompra}" style="font-size: 40px; width: 250px;"/>
+			
+		</h:form>
+	</div>
+	
+	
+	
+	<p:dialog header="Finalização de Compra" widgetVar="dlg2" minHeight="40" width="550" showEffect="fade" modal="true">    	
+    	<h:form>
+	    	<h:panelGrid columns="2">
+	    		<p:outputLabel value="CPF do CLiente: " for="cpfCliente"/>
+	    		<p:inputText id="cpfCliente" value="#{vendaBean.venda.cpfCliente}"/>
+	    		
+	    		<p:outputLabel for="radioForma" value="Forma de Pagamento: "/>
+	    		<p:selectOneRadio id="radioForma" value="#{vendaBean.tPag}">	
+	    			<f:selectItem itemLabel="Dinheiro" itemValue="DINHEIRO" />	
+	    			<f:selectItem itemLabel="Cartão" itemValue="CARTAO" />
+	    			<p:ajax event="change" listener="#{vendaBean.teste()}" update="@form" process="@form"/>
+	    		</p:selectOneRadio>
+								
+				<p:outputLabel for="inputParcela" value="Parcelas: "/>				
+				<p:selectOneMenu id="inputParcela" value="#{vendaBean.opcaoSelectParcela}" dynamic="true" disabled="#{vendaBean.statusCompra}">
+                    <f:selectItem itemLabel="1x" itemValue="1"/>
+                    <f:selectItem itemLabel="2x" itemValue="2"/>
+                    <f:selectItem itemLabel="3x" itemValue="3"/>
+                    <f:selectItem itemLabel="4x" itemValue="4"/>
+                    <f:selectItem itemLabel="5x" itemValue="5"/>
+                    <f:selectItem itemLabel="6x" itemValue="6"/>
+                    <f:selectItem itemLabel="7x" itemValue="7"/>
+                    <f:selectItem itemLabel="8x" itemValue="8"/>
+                    <f:selectItem itemLabel="9x" itemValue="9"/>
+                    <f:selectItem itemLabel="10x" itemValue="10"/>
+                    <p:ajax event="change" listener="#{vendaBean.teste()}" update="@form" process="@form"/>
+                </p:selectOneMenu>
+				
+								
+				<p:outputLabel for="valParcelas" value="Valor da Parcela:"/>
+				<p:inputText id="valParcelas" value="#{vendaBean.valor}" disabled="true"/>
+				
+				<p:commandButton value="Confirmar" action="#{vendaBean.ConfirmaCompra()}" process="@form" 
+								update="@form, :ValPacialCompra, :formItensDesejados :formCompra :formBusca :formPesquisa :growl"/>
+				<p:commandButton value="Cancelar" action="#{vendaBean.cancelar()}"/>
+	    	</h:panelGrid>
+    	</h:form>
+    	
+    	
+		
+    	
+	</p:dialog>
+	
+		
+	
+	
+</body> 
+</html>

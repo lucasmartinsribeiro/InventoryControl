@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">  
+
+
+<ui:composition template="/BaseTemplate.xhtml">
+	<ui:define name="titulo">Relatório</ui:define>
+	<ui:define name="conteudo">
+		<h:form>
+			<h2 style="text-align: Center;">Filtros de Busca</h2>
+			<h:panelGrid columns="10">				
+					<p:calendar value="#{relatorioBean.dataInicial}" id="dataIni" 
+							pattern="dd/MM/yyyy" mask="true"/>
+					
+					<p:outputLabel value=" Até " />
+					
+					<p:calendar value="#{relatorioBean.dataFinal}" id="dataFinal" 
+							pattern="dd/MM/yyyy" mask="true"/>
+					
+					
+					<div class="p-field p-col-12 p-md-4">
+		                <p:outputLabel for="@next" value="Forma de Pagamento: "/>
+		                <p:selectOneMenu id="lazy" value="#{relatorioBean.tPag}" dynamic="true">
+		                    <f:selectItem itemLabel="Todos" itemValue="0"/>
+		                    <f:selectItem itemLabel="Dinheiro" itemValue="DINHEIRO"/>
+		                    <f:selectItem itemLabel="Cartão" itemValue="CARTAO"/>
+		                </p:selectOneMenu>
+		            </div>				
+				<p:commandButton value="Pesquisar" action="#{relatorioBean.Pesquisar()}" process="@form" update="@form, :formLista"/>				
+			</h:panelGrid>
+		</h:form>
+		<h:form id="formLista"> 		
+			<p:dataTable value="#{relatorioBean.vendas}" var="vendaAtual">
+				<p:column headerText="CPF">
+						<h:outputText value="#{vendaAtual.cpfCliente}" />
+				</p:column>
+				<p:column headerText="Data">
+						<h:outputText value="#{vendaAtual.dataVenda}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+				</p:column>
+				<p:column headerText="Tipo Pagamento">
+						<h:outputText value="#{vendaAtual.pagamento.tipo}" />
+				</p:column>
+				<p:column headerText="Parcelas">
+						<h:outputText value="#{vendaAtual.pagamento.quantidadeParcela}" />
+				</p:column>
+				<p:column headerText="Valor Total">
+						<h:outputText value="#{vendaAtual.pagamento.valorTotal}">
+							<f:convertNumber type="currency" currencySymbol="R$"/>
+						</h:outputText>						
+				</p:column>
+				<p:column headerText="">
+						<p:commandButton value="Detalhes"  action="#{relatorioBean.detalhes(vendaAtual)}"  onclick="PF('dlg2').show()"
+							update="@form, :formListDetalhes" process="@form"/>					
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		
+		
+		
+		
+		<p:dialog header="Detalhes da Venda" widgetVar="dlg2" minHeight="40" width="750" showEffect="fade" modal="true">    	
+	    	<h:form id="formListDetalhes">
+		    	 <p:dataTable value="#{relatorioBean.vendaDetalhes.itens}" var="vendaAtual">
+					<p:column headerText="Código do Produto">
+							<h:outputText value="#{vendaAtual.produto.codigo}" />
+					</p:column>
+					<p:column headerText="Nome do Produto">
+							<h:outputText value="#{vendaAtual.produto.nome}" />
+					</p:column>
+					<p:column headerText="Descrição do Produto">
+							<h:outputText value="#{vendaAtual.produto.descricao}" />
+					</p:column>
+					<p:column headerText="Quantidade Adquirida">
+							<h:outputText value="#{vendaAtual.quantidade}" />
+					</p:column>
+					<p:column headerText="Valor Unitário">
+							<h:outputText value="#{vendaAtual.produto.preco}">
+								<f:convertNumber type="currency" currencySymbol="R$"/>
+							</h:outputText>
+					</p:column>					
+		    	</p:dataTable>
+	    	</h:form>
+		</p:dialog>
+		
+	</ui:define>
+
+</ui:composition>
+	
+
+</html>

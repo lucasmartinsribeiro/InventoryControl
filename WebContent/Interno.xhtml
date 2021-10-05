@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">  
+
+
+<ui:composition template="/BaseTemplate.xhtml">
+	<ui:define name="titulo">Área Interna</ui:define>
+	<ui:define name="conteudo">
+		<h2 style="text-align: Center;">Produtos com a estoque abaixo de 10 Unidades </h2>
+		
+		<h:form>
+			<p:dataTable value="#{internoBean.produtos}" var="produtos">
+				<p:column headerText="Código">
+					<h:outputText value="#{produtos.codigo}" />
+				</p:column>
+				<p:column headerText="Nome do Produto">
+					<h:outputText value="#{produtos.nome}" />
+				</p:column>
+				<p:column headerText="Unidades em Estoque">
+					<h:outputText value="#{produtos.quantidade}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+</html>

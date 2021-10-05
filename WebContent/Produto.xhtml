@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<ui:composition template="/BaseTemplate.xhtml">
+	<ui:define name="titulo">Gerendiador de Produtos</ui:define>
+	
+	<ui:define name="conteudo">
+	
+			<h:form id="growl">
+		       	<p:growl showDetail="true" sticky="true" />  
+		    </h:form>
+	
+	
+			<h:form id="formCadastro">
+				<h:panelGrid columns="2">
+						<p:outputLabel for="inputCodigo" value="Código: "/>
+				 		<p:inputText id="inputCodigo" value="#{produtoBean.produto.codigo}" disabled="#{produtoBean.statusInputs}"/>
+				 		
+						<p:outputLabel for="inputNome" value="Nome: "/>
+				 		<p:inputText id="inputNome" value="#{produtoBean.produto.nome}" disabled="#{produtoBean.statusInputs}"/>
+				 		
+				 		<p:outputLabel for="inputDescricao" value="Descrição: "/>
+				 		<p:inputText id="inputDescricao" value="#{produtoBean.produto.descricao}" disabled="#{produtoBean.statusInputs}"/>
+				 		
+				 		<p:outputLabel for="inputPreco" value="Preço: "/>
+				 		<p:inputText id="inputPreco" value="#{produtoBean.produto.preco}" disabled="#{produtoBean.statusInputs}"/>
+				 		
+				 		<p:outputLabel for="inputQuantidade" value="Quantidade: "/>
+				 		<p:inputText id="inputQuantidade" value="#{produtoBean.produto.quantidade}" />
+				
+						<p:commandButton value="Salvar" action="#{produtoBean.gravar()}"
+											process="@form" update="@form, :formLista :growl"/>
+						<p:commandButton value="Cancelar" action="#{produtoBean.cancelar()}"
+											process="@form" update="@form, :formLista"/>
+				</h:panelGrid>
+			</h:form>
+			
+			
+			<h:form id="formPesquisa">
+				<h:panelGrid columns="3">
+					<p:outputLabel value="Pesquisar por Código: " for="codigoPesq" />
+					<p:inputText value="#{produtoBean.numCodigo}" id="codigoPesq"/>
+					<p:commandButton value="Pesquisar" action="#{produtoBean.filterCodigo()}"
+										process="@form" update="@form, :formLista"/>
+				</h:panelGrid>
+			</h:form>
+			
+			<h:form id="formLista"> 
+				<p:dataTable value="#{produtoBean.produtos}" var="produtoAtual">
+					<p:column headerText="Código">
+							<h:outputText value="#{produtoAtual.codigo}" />
+					</p:column>
+					<p:column headerText="Nome">
+							<h:outputText value="#{produtoAtual.nome}" />					
+					</p:column>
+					<p:column headerText="Descrição">
+							<h:outputText value="#{produtoAtual.descricao}" />
+					</p:column>
+					<p:column headerText="Preço">
+							<h:outputText value="#{produtoAtual.preco}" />
+					</p:column>
+					<p:column headerText="Quantidade">
+							<h:outputText value="#{produtoAtual.quantidade}" />
+					</p:column>
+					<p:column headerText="Ações">
+		    			<p:commandButton value="Alterar" action="#{produtoBean.carregaProduto(produtoAtual)}"
+										process="@form" update="@form, :formCadastro"/>				
+						<p:commandButton value="Excluir" action="#{produtoBean.excluirProduto(produtoAtual)}"
+										process="@form" update="@form, :formLista :growl"/>
+						<p:commandButton value="Quantidade" action="#{produtoBean.AlterarQuantidade(produtoAtual)}"
+										process="@form" update="@form, :formCadastro"/>
+					</p:column>
+				</p:dataTable>	
+			</h:form>
+		</ui:define>
+</ui:composition>
+</html>

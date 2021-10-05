@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">  
+
+<h:head></h:head> 
+<body> 
+	<div class="pagina">
+		<div class="cabecalho">
+			<h1 style="text-align: Center;"><ui:insert name="titulo"></ui:insert></h1>	
+			<h:form>
+				<p:menubar>
+					<p:menuitem value="Área Externa" action="index.xhtml?faces-redirect=true"/>
+					<p:menuitem value="Área Interna" action="Interno.xhtml?faces-redirect=true"/>				
+					<p:menuitem value="Gerenciar Produto" action="Produto.xhtml?faces-redirect=true"/>	
+					<p:menuitem value="Relatório" action="Relatorio.xhtml?faces-redirect=true"/>							
+				</p:menubar>
+			</h:form>
+		</div>
+		<div class="conteudo">
+			<ui:insert name="conteudo"></ui:insert>
+		</div>	
+	</div>	
+
+</body> 
+</html>
